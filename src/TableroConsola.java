@@ -6,25 +6,24 @@ public class TableroConsola {
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
     }
-
     public void correr() {
         Scanner sc = new Scanner(System.in);
         tablero.insertarNumeroDos();
-        while (true) {
+        printTablero(tablero);
+        while (!tablero.alcanceLimite()) {
             // pedir comando (mover izquierda, derecha, arriba)
             // w = arriba, a = izquierda, s = abajo, d = derecha.
             // ejecutar movimiento.
             // mostrar tablero.
-            System.out.print("\033[H\033[2J");
-            System.out.flush();
             printMessage();
             String inputCase = sc.next();
-            if (inputCase == "w") tablero.moverArriba();
-            else if (inputCase == "a") tablero.moverIzquierda();
-            else if (inputCase == "s") tablero.moverAbajo();
-            else if (inputCase == "d") tablero.moverDerecha();
+            if (inputCase.compareTo("w")==0) tablero.moverArriba();
+            else if (inputCase.compareTo("a")==0) tablero.moverIzquierda();
+            else if (inputCase.compareTo("s")==0) tablero.moverAbajo();
+            else if (inputCase.compareTo("d")==0) tablero.moverDerecha();
             printTablero(tablero);
         }
+        System.out.println("Juego Terminado!");
     }
 
     private void printMessage() {
@@ -34,9 +33,11 @@ public class TableroConsola {
 
     private void printTablero(Tablero tablero) {
         String strTab = tablero.toString();
-        String parts[] = strTab.split("|");
+        String[] parts = strTab.split("\\|");
         for (int i = 0; i < parts.length; i++) {
-            System.out.println(parts[i]);
+            System.out.print("[");
+            System.out.print(parts[i]);
+            System.out.println("]");
         }
     }
     // cuando termina el ciclo infinito?

@@ -1,5 +1,5 @@
 public class Main {
-    public static void main(){
+    public static void main(String args[]){
         Tablero tablero = new Tablero();
         TableroConsola consola = new TableroConsola(tablero);
         consola.correr();
