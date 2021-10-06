@@ -1,3 +1,5 @@
+package j2048backend;
+
 import java.util.*;
 public class Tablero {
     //Atributes:
@@ -79,29 +81,29 @@ public class Tablero {
             }
         }
     }
-    public void moverIzquierda(){
+    public boolean moverIzquierda(){
         mover();
-        insertarNumeroDos();
+        return insertarNumeroDos();
     }
-    public void moverArriba(){
+    public boolean moverArriba(){
         rotateLeft();
         mover();
         rotateRight();
-        insertarNumeroDos();
+        return insertarNumeroDos();
     }
-    public void moverDerecha(){
+    public boolean moverDerecha(){
         rotateLeft();
         rotateLeft();
         mover();
         rotateRight();
         rotateRight();
-        insertarNumeroDos();
+        return insertarNumeroDos();
     }
-    public void moverAbajo(){
+    public boolean moverAbajo(){
         rotateRight();
         mover();
         rotateLeft();
-        insertarNumeroDos();
+        return insertarNumeroDos();
     }
     /*
     public void moverIzquierda(){
@@ -213,14 +215,5 @@ public class Tablero {
         }
         return tab;
     }
-    /*
-    public void printT(){
-        String str = toString();
-        String partes[] = str.split("\\|");
-        for(String x: partes){
-            System.out.println(x);
-        }
-    }
-     */
 }
 
