@@ -25,7 +25,7 @@ public class Tablero {
         }
     }
     //Rotate the matrix 90 degree clockwise:
-    public void rotateRight(){
+    private void rotateRight(){
         int M[][] = new int[dimension][dimension];
         int x =0;
         for(int j = 0; j < dimension; j++){
@@ -38,7 +38,7 @@ public class Tablero {
         }
         matrix = M;
     }
-    public void rotateLeft(){
+    private void rotateLeft(){
         int M[][] = new int[dimension][dimension];
         int x =0;
         for(int j = dimension-1; j>= 0; j--) {
@@ -81,29 +81,33 @@ public class Tablero {
             }
         }
     }
-    public boolean moverIzquierda(){
+    public void moverIzquierda(){
+        String str_original = toString();
         mover();
-        return insertarNumeroDos();
+        if(!str_original.equals(toString())) insertarNumeroDos();
     }
-    public boolean moverArriba(){
+    public void moverArriba(){
+        String str_original = toString();
         rotateLeft();
         mover();
         rotateRight();
-        return insertarNumeroDos();
+        if(!str_original.equals(toString())) insertarNumeroDos();
     }
-    public boolean moverDerecha(){
+    public void moverDerecha(){
+        String str_original = toString();
         rotateLeft();
         rotateLeft();
         mover();
         rotateRight();
         rotateRight();
-        return insertarNumeroDos();
+        if(!str_original.equals(toString())) insertarNumeroDos();
     }
-    public boolean moverAbajo(){
+    public void moverAbajo(){
+        String str_original = toString();
         rotateRight();
         mover();
         rotateLeft();
-        return insertarNumeroDos();
+        if(!str_original.equals(toString())) insertarNumeroDos();
     }
     /*
     public void moverIzquierda(){
@@ -181,37 +185,50 @@ public class Tablero {
         return ans;
     }
 
-    //private int LIMITE = 2048;
-    private int LIMITE = 16;
-
-    public boolean alcanceLimite(){
-        // una de las casillas contiene el valor LIMITE.
-        for(int i=0; i<dimension; i++)
-            for(int j=0; j<dimension; j++)
-                if(matrix[i][j]==LIMITE) return true;
-
+    private boolean sePuedeMover(){
         //Verificamos si ya no se pueden hacer movimientos:
         Tablero dupTab = duplicate(this);
         String str = toString();
         dupTab.moverArriba();
         String strm = dupTab.toString();
-        if(!str.equals(strm)) return false;
+        if(!str.equals(strm)) return true;
         dupTab.moverAbajo();
         strm = dupTab.toString();
-        if(!str.equals(strm)) return false;
+        if(!str.equals(strm)) return true;
         dupTab.moverDerecha();
         strm = dupTab.toString();
-        if(!str.equals(strm)) return false;
+        if(!str.equals(strm)) return true;
         dupTab.moverIzquierda();
         strm = dupTab.toString();
-        if(!str.equals(strm)) return false;
-        return true;
+        if(!str.equals(strm)) return true;
+        return false;
     }
+    //private int LIMITE = 2048;
+    private int LIMITE = 32;//16;
+
+    private boolean alcanceLimite(){
+        // una de las casillas contiene el valor LIMITE.
+        for(int i=0; i<dimension; i++)
+            for(int j=0; j<dimension; j++)
+                if(matrix[i][j]==LIMITE) return true;
+        return false;
+    }
+
+    public Estado estado(){
+        if(alcanceLimite()){
+            return Estado.GANADO;
+        }
+        if(!sePuedeMover()){
+            return Estado.PERDIDO;
+        }
+        return Estado.CONTINUAR;
+    }
+
     private Tablero duplicate(Tablero tablero){
         Tablero tab = new Tablero();
-        int M[][] = new int[dimension][dimension];
+        int duplicateMatrix[][] = new int[dimension][dimension];
         for(int i = 0; i<tablero.dimension; i++){
-            M[i] = tablero.matrix[i].clone();
+            duplicateMatrix[i] = tablero.matrix[i].clone();
         }
         return tab;
     }

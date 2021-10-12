@@ -2,10 +2,10 @@ package j2048frontend;
 
 import java.util.*;
 import j2048backend.Tablero;
+import j2048backend.Estado;
 
 public class TableroConsola {
     private Tablero tablero;
-
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
     }
@@ -13,20 +13,32 @@ public class TableroConsola {
         Scanner sc = new Scanner(System.in);
         tablero.insertarNumeroDos();
         printTablero(tablero);
-        while (!tablero.alcanceLimite()) {
+        boolean continuar = true;
+        while (continuar) {
             // pedir comando (mover izquierda, derecha, arriba)
             // w = arriba, a = izquierda, s = abajo, d = derecha.
             // ejecutar movimiento.
             // mostrar tablero.
             printMessage();
             String inputCase = sc.next();
-            if (inputCase.compareTo("w")==0) tablero.moverArriba();
-            else if (inputCase.compareTo("a")==0) tablero.moverIzquierda();
-            else if (inputCase.compareTo("s")==0) tablero.moverAbajo();
-            else if (inputCase.compareTo("d")==0) tablero.moverDerecha();
+            if (inputCase.equals("w")) tablero.moverArriba();
+            else if (inputCase.equals("a")) tablero.moverIzquierda();
+            else if (inputCase.equals("s")) tablero.moverAbajo();
+            else if (inputCase.equals("d")) tablero.moverDerecha();
             printTablero(tablero);
+            Estado estadoActual = tablero.estado();
+            switch(estadoActual){
+                case PERDIDO:
+                    System.out.println("Perdio la partida!");
+                    continuar = false;
+                    break;
+                case GANADO:
+                    System.out.println("Gano la partida!");
+                    continuar = false;
+                    break;
+                default: break;
+            }
         }
-        System.out.println("Juego Terminado!");
     }
     private void printMessage() {
         System.out.println("Ingrese comando a ejecutar:");
