@@ -4,9 +4,9 @@ import j2048frontend.*;
 public class Main {
     public static void main(String args[]){
         Tablero tablero = new Tablero();
-        //TableroConsola consola = new TableroConsola(tablero);
-        //consola.correr();
+        TableroConsola consola = new TableroConsola(tablero);
         TableroGUI gui = new TableroGUI(tablero);
         gui.correr();
+        consola.correr();
     }
 }
