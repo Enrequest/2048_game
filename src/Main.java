@@ -1,5 +1,6 @@
 import j2048backend.Tablero;
-import j2048frontend.*;
+import j2048frontend.consola.TableroConsola;
+import j2048frontend.gui.TableroGUI;
 
 public class Main {
     public static void main(String args[]){

@@ -1,6 +1,6 @@
 package j2048backend;
 
-import j2048frontend.IObservador;
+import j2048frontend.ui.Observador;
 
 import java.util.*;
 public class Tablero {
@@ -8,7 +8,7 @@ public class Tablero {
     private final int dimension = 4;
     private int matrix[][] = new int [dimension][dimension];
     //List of Observers:
-    private List<IObservador> observadores = new ArrayList<IObservador>();
+    private List<Observador> observadores = new ArrayList<Observador>();
     //Methods:
     private boolean isFull(){
         for(int i = 0; i<dimension; i++)
@@ -204,14 +204,14 @@ public class Tablero {
     }
     */
 
-    public void addObserver(IObservador observador) {
+    public void agregarObservador(Observador observador) {
         observadores.add(observador);
     }
 
     private void notificar(){
         Estado estadoA = estado();
-        for(IObservador observador : observadores){
-            observador.update(estadoA);
+        for(Observador observador : observadores){
+            observador.actualizar(estadoA);
         }
     }
 

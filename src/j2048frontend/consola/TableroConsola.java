@@ -1,25 +1,32 @@
-package j2048frontend;
+package j2048frontend.consola;
 
 import java.util.*;
 import j2048backend.Tablero;
 import j2048backend.Estado;
+import j2048frontend.ui.Observador;
+import j2048frontend.ui.TableroUI;
 
-public class TableroConsola implements IObservador {
+public class TableroConsola implements Observador, TableroUI {
     private Tablero tablero;
     private boolean continuar = true;
     //private Observador observable;
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
-        tablero.addObserver(this);
+        tablero.agregarObservador(this);
+        if(!this.tablero.toString().contains("2")){
+            this.tablero.insertarNumeroDos();
+        }
     }
+    @Override
     public void correr() {
         Scanner sc = new Scanner(System.in);
-        tablero.insertarNumeroDos();
+        //tablero.insertarNumeroDos();
         //printTablero(tablero);
         //boolean continuar = true;
         continuar = true;
-        printMessage();
+        //printMessage();
         printTablero(tablero);
+        printMessage();
         while (continuar) {
             // pedir comando (mover izquierda, derecha, arriba)
             // w = arriba, a = izquierda, s = abajo, d = derecha.
@@ -34,6 +41,7 @@ public class TableroConsola implements IObservador {
 
             //printMessage();
             //printTablero(tablero);
+            /*
             Estado estadoActual = tablero.estado();
             switch(estadoActual){
                 case PERDIDO:
@@ -46,6 +54,7 @@ public class TableroConsola implements IObservador {
                     break;
                 default: break;
             }
+            */
         }
     }
     private void printMessage() {
@@ -63,7 +72,7 @@ public class TableroConsola implements IObservador {
     }
 
     @Override
-    public void update(Estado estado) {
+    public void actualizar(Estado estado) {
         //printTablero(tablero);
         //printMessage();
         switch(estado){
