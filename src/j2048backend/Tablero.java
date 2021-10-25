@@ -1,27 +1,38 @@
 package j2048backend;
 
-import j2048frontend.ui.Observador;
+import j2048frontend.Observador;
 
 import java.util.*;
 public class Tablero {
     //Atributes:
-    private final int dimension = 4;
-    private int matrix[][] = new int [dimension][dimension];
-    //List of Observers:
-    private List<Observador> observadores = new ArrayList<Observador>();
+    private int DIMENSION;
+    private int matrix[][];
+    ////List of Observers:
+    private List<Observador> observadores;
+    ///Constructors:
+    private Tablero() {
+        DIMENSION = 4;
+        observadores = new ArrayList<Observador>();
+        matrix = new int[DIMENSION][DIMENSION];
+    }
     //Methods:
+    public static Tablero crear2048(){
+        Tablero tablero = new Tablero();
+        tablero.insertarNumeroDos();
+        return tablero;
+    }
     private boolean isFull(){
-        for(int i = 0; i<dimension; i++)
-            for(int j = 0; j<dimension; j++)
+        for(int i = 0; i< DIMENSION; i++)
+            for(int j = 0; j< DIMENSION; j++)
                 if(matrix[i][j]==0) return false;
         return true;
     }
-    public boolean insertarNumeroDos(){
+    private boolean insertarNumeroDos(){
         Random rand = new Random();
         if(isFull()) return false;
         while(true){
-            int i = rand.nextInt(dimension);
-            int j = rand.nextInt(dimension);
+            int i = rand.nextInt(DIMENSION);
+            int j = rand.nextInt(DIMENSION);
             if (matrix[i][j] == 0) {
                 matrix[i][j] = 2;
                 return true;
@@ -30,11 +41,11 @@ public class Tablero {
     }
     //Rotate the matrix 90 degree clockwise:
     private void rotateRight(){
-        int M[][] = new int[dimension][dimension];
+        int M[][] = new int[DIMENSION][DIMENSION];
         int x =0;
-        for(int j = 0; j < dimension; j++){
+        for(int j = 0; j < DIMENSION; j++){
             int y = 0;
-            for(int i = dimension - 1; i >= 0; i--) {
+            for(int i = DIMENSION - 1; i >= 0; i--) {
                 M[x][y] = matrix[i][j];
                 ++y;
             }
@@ -43,11 +54,11 @@ public class Tablero {
         matrix = M;
     }
     private void rotateLeft(){
-        int M[][] = new int[dimension][dimension];
+        int M[][] = new int[DIMENSION][DIMENSION];
         int x =0;
-        for(int j = dimension-1; j>= 0; j--) {
+        for(int j = DIMENSION -1; j>= 0; j--) {
             int y = 0;
-            for (int i = 0; i < dimension; i++) {
+            for (int i = 0; i < DIMENSION; i++) {
                 M[x][y] = matrix[i][j];
                 ++y;
             }
@@ -56,10 +67,10 @@ public class Tablero {
         matrix = M;
     }
     private void mover(){
-        for(int i=0; i<dimension; i++){
+        for(int i = 0; i< DIMENSION; i++){
             int last = matrix[i][0];
             int idx_last = 0;
-            for(int j=1; j<dimension; j++){
+            for(int j = 1; j< DIMENSION; j++){
                 int curr = matrix[i][j];
                 if(curr!=0){
                     //First Case only come here once.
@@ -120,8 +131,8 @@ public class Tablero {
 
     public String toString(){
         String ans = "";
-        for(int i=0; i<dimension; i++){
-            for(int j=0;j<dimension; j++) {
+        for(int i = 0; i< DIMENSION; i++){
+            for(int j = 0; j< DIMENSION; j++) {
                 if(i==0&&j==0) ans+=matrix[i][j];
                 else if(j==0) ans+= "|" + matrix[i][j];
                 else ans+= " " + matrix[i][j];
@@ -150,16 +161,24 @@ public class Tablero {
     }
     */
     //////////////////////////////////
-    private boolean sePuedeMover(int [][] tab){
-        for(int i = 0; i < dimension; i++){
-            int[] filaTab = tab[i];
-            for(int j = 0; j < dimension- 1; j ++){
-                if (filaTab [j] == filaTab[j + 1]){
-                    return false;
+    private boolean sePuedeMover(){
+        for(int i = 0; i < DIMENSION; i++){
+            for(int j = 0; j < DIMENSION; j++){
+                if(matrix[i][j]==0) return true;
+                if((j+1< DIMENSION && matrix[i][j]==matrix[i][j+1]) || (i+1< DIMENSION && matrix[i][j]==matrix[i+1][j])){
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
+    }
+    private String[][] tablerotoMatrix(){
+        String columns[] = toString().split("\\|");
+        String tableroMatrix[][] = new String[DIMENSION][DIMENSION];
+        for(int i = 0; i<columns.length; i++){
+            tableroMatrix[i] = columns[i].split(" ");
+        }
+        return tableroMatrix;
     }
     /*
     private boolean verificarAdyacenciaCol(){
@@ -174,11 +193,10 @@ public class Tablero {
 
     //private int LIMITE = 2048;
     private int LIMITE = 32;//16;
-
     private boolean alcanceLimite(){
         // una de las casillas contiene el valor LIMITE.
-        for(int i=0; i<dimension; i++)
-            for(int j=0; j<dimension; j++)
+        for(int i = 0; i< DIMENSION; i++)
+            for(int j = 0; j< DIMENSION; j++)
                 if(matrix[i][j]==LIMITE) return true;
         return false;
     }
@@ -187,22 +205,12 @@ public class Tablero {
         if(alcanceLimite()){
             return Estado.GANADO;
         }
-        //if(!sePuedeMover()){
-        if(isFull()){
+        if(!sePuedeMover()){
+        //if(isFull()){
             return Estado.PERDIDO;
         }
         return Estado.CONTINUAR;
     }
-    /*
-    private int[][] duplicate(Tablero tablero){
-        Tablero tab = new Tablero();
-        int duplicateMatrix[][] = new int[dimension][dimension];
-        for(int i = 0; i<tablero.dimension; i++){
-            duplicateMatrix[i] = tablero.matrix[i].clone();
-        }
-        return tab;
-    }
-    */
 
     public void agregarObservador(Observador observador) {
         observadores.add(observador);

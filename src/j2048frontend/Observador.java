@@ -1,4 +1,4 @@
-package j2048frontend.ui;
+package j2048frontend;
 import j2048backend.Estado;
 
 public interface Observador {

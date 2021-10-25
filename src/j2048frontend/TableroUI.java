@@ -1,4 +1,4 @@
-package j2048frontend.ui;
+package j2048frontend;
 
 public interface TableroUI {
     void correr();

@@ -3,8 +3,8 @@ package j2048frontend.consola;
 import java.util.*;
 import j2048backend.Tablero;
 import j2048backend.Estado;
-import j2048frontend.ui.Observador;
-import j2048frontend.ui.TableroUI;
+import j2048frontend.Observador;
+import j2048frontend.TableroUI;
 
 public class TableroConsola implements Observador, TableroUI {
     private Tablero tablero;
@@ -13,18 +13,11 @@ public class TableroConsola implements Observador, TableroUI {
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
         tablero.agregarObservador(this);
-        if(!this.tablero.toString().contains("2")){
-            this.tablero.insertarNumeroDos();
-        }
     }
     @Override
     public void correr() {
         Scanner sc = new Scanner(System.in);
-        //tablero.insertarNumeroDos();
-        //printTablero(tablero);
-        //boolean continuar = true;
         continuar = true;
-        //printMessage();
         printTablero(tablero);
         printMessage();
         while (continuar) {
@@ -38,23 +31,6 @@ public class TableroConsola implements Observador, TableroUI {
             else if (inputCase.equals("a")) tablero.moverIzquierda();
             else if (inputCase.equals("s")) tablero.moverAbajo();
             else if (inputCase.equals("d")) tablero.moverDerecha();
-
-            //printMessage();
-            //printTablero(tablero);
-            /*
-            Estado estadoActual = tablero.estado();
-            switch(estadoActual){
-                case PERDIDO:
-                    System.out.println("Perdio la partida!");
-                    continuar = false;
-                    break;
-                case GANADO:
-                    System.out.println("Gano la partida!");
-                    continuar = false;
-                    break;
-                default: break;
-            }
-            */
         }
     }
     private void printMessage() {
@@ -70,25 +46,29 @@ public class TableroConsola implements Observador, TableroUI {
             System.out.println("]");
         }
     }
-
+    public void reset(){
+        tablero = Tablero.crear2048();
+    }
     @Override
     public void actualizar(Estado estado) {
-        //printTablero(tablero);
-        //printMessage();
         switch(estado){
             case PERDIDO:
                 System.out.println("Perdio la partida!");
-                continuar = false;
+                reset();
+                //continuar = false;
                 break;
             case GANADO:
                 System.out.println("Gano la partida!");
-                continuar = false;
+                reset();
+                //tablero = Tablero.crear2048();
+                //continuar = false;
                 break;
             default:
-                printTablero(tablero);
-                printMessage();
+                System.out.println("Continua la partida");
                 break;
         }
+        printTablero(tablero);
+        printMessage();
         //printMessage();
     }
     // cuando termina el ciclo infinito?

@@ -4,7 +4,7 @@ import j2048frontend.gui.TableroGUI;
 
 public class Main {
     public static void main(String args[]){
-        Tablero tablero = new Tablero();
+        Tablero tablero = Tablero.crear2048();
         TableroConsola consola = new TableroConsola(tablero);
         TableroGUI gui = new TableroGUI(tablero);
         gui.correr();

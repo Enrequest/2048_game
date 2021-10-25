@@ -1,8 +1,8 @@
 package j2048frontend.gui;
 import j2048backend.Tablero;
 import j2048backend.Estado;
-import j2048frontend.ui.Observador;
-import j2048frontend.ui.TableroUI;
+import j2048frontend.Observador;
+import j2048frontend.TableroUI;
 
 import javax.swing.*;
 import javax.swing.BorderFactory;
@@ -22,60 +22,80 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
 
     private JPanel panel;
 
+    private JPanel mensaje;
+    private JLabel ganados;
+    private int cantGanados;
+    private JLabel estadoPartida;
+
     public TableroGUI(Tablero tablero){
         this.tablero = tablero;
         tablero.agregarObservador(this);
-        if(!this.tablero.toString().contains("2")){
-            this.tablero.insertarNumeroDos();
-        }
+        cantGanados = 0;
     }
 
     @Override
     public void correr(){
         //tablero.insertarNumeroDos();
         initGameFrame();
+        //createFrame();
     }
-    private void initGameFrame(){
+    private void createFrame(){
+        //Creamos el frame principal
         frame = new JFrame("2048 Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 500);
+        frame.setSize(600, 600);
         frame.setResizable(false);
         frame.setLayout(null);
-        //frame.getContentPane().setBackground(new Color(0xCDC1B4));
 
-        //Etiquetamos
+        //Creamos las etiquetas:
         ImageIcon up = new ImageIcon("/home/korotkevich/IdeaProjects/EjercicioTDD/src/j2048frontend/gui/img/up-arrow2.png");
         dirButtons[0] = new JButton(up);
-        //ImageIcon right = new ImageIcon("/home/korotkevich/IdeaProjects/EjercicioTDD/src/j2048frontend/img");
         ImageIcon right = new ImageIcon("/home/korotkevich/IdeaProjects/EjercicioTDD/src/j2048frontend/gui/img/right-arrow2.png");
         dirButtons[1] = new JButton(right);
         ImageIcon down = new ImageIcon("/home/korotkevich/IdeaProjects/EjercicioTDD/src/j2048frontend/gui/img/down-arrow2.png");
         dirButtons[2] = new JButton(down);
         ImageIcon left = new ImageIcon("/home/korotkevich/IdeaProjects/EjercicioTDD/src/j2048frontend/gui/img/left-arrow2.png");
         dirButtons[3] = new JButton(left);
+
+        dirButtons[0].setBounds(250, 5, 100, 40);
+        dirButtons[1].setBounds(470, 180, 100, 40);
+        dirButtons[2].setBounds(250, 355, 100, 40);
+        dirButtons[3].setBounds(20, 180, 105, 40);
+
         //Agregamos Listeners
         dirButtons[0].addActionListener(this);
         dirButtons[1].addActionListener(this);
         dirButtons[2].addActionListener(this);
         dirButtons[3].addActionListener(this);
 
-        terminar = new JButton("Terminar");
-        terminar.setBounds(225, 400, 150, 50);
-        terminar.addActionListener(this);
-
-        for(int i=0; i<numDir; i++){
-            //dirButtons[i].setFont(myFont);
-            dirButtons[i].setFocusable(false);
-        }
-        dirButtons[0].setBounds(250, 5, 100, 40);
-        dirButtons[1].setBounds(470, 180, 100, 40);
-        dirButtons[2].setBounds(250, 355, 100, 40);
-        dirButtons[3].setBounds(20, 180, 105, 40);
-
         for (int i = 0; i < numDir; i++) frame.add(dirButtons[i]);
 
+        //Agregamos la ventana de mensajes.
+        mensaje = new JPanel();
+        mensaje.setBounds(150, 425, 300, 50);
+        JLabel labelGanados = new JLabel("Ganados: ");
+        mensaje.add(labelGanados);
+        ganados = new JLabel(Integer.toString(cantGanados));
+        mensaje.add(ganados);
+        estadoPartida = new JLabel("");
+        mensaje.add(estadoPartida);
+        //mensaje.setBackground(new Color(0xCDC1B4));
+        frame.add(mensaje);
 
+        //Creamos el boton de Terminar
+        terminar = new JButton("Terminar");
+        terminar.setBounds(225, 500, 150, 50);
+        terminar.addActionListener(this);
         frame.add(terminar);
+        /*
+        for(int i=0; i<numDir; i++){
+            dirButtons[i].setFocusable(false);
+        }
+         */
+        createPanel();
+        frame.setVisible(true);
+    }
+    private void createPanel(){
         panel = new JPanel();
         panel.setBounds(150, 50, 300, 300);
         panel.setLayout(new GridLayout(dimension, dimension, 0, 0));
@@ -90,52 +110,18 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
                 panel.add(celdas[i][j]);
             }
         frame.add(panel);
-        showFrame();
-        frame.setVisible(true);
     }
+
+    private void initGameFrame(){
+        createFrame();
+        showFrame();
+    }
+
     private void showFrame(){
-        //Modificamos el tablero Despues de agregar elementos.
-        //panel = new JPanel();
-
-        //panel.setBounds(150, 50, 300, 300);
-        //panel.setLayout(new GridLayout(dimension, dimension, 0, 0));
-        //panel.setBackground(new Color(0xCDC1B4));
-
         String matrixCeldas[][] = toMatrix();
         updateCeldas(matrixCeldas);
-        /*
-        JLabel jl;
-        for(int i=0; i<dimension; i++){
-            for(int j=0; j<dimension; j++){
-                jl = celdas[i][j];
-                jl.setOpaque(true);
-                jl.setBorder(BorderFactory.createMatteBorder(3,3, 3, 3, new Color(0xBBADA0)));
-                //jl.setFont(new Font("Dialog", 1, 42));
-                jl.setFont(new Font("Dialog", 1, 42));
-                panel.add(jl);
-            }
-        }
-        */
-        //frame.add(panel);
-        //frame.setVisible(true);
-
-        /*
-        Estado estadoActual = tablero.estado();
-        switch(estadoActual){
-            case PERDIDO:
-                JOptionPane.showMessageDialog(null, "Perdiste!");
-                restart();
-                correr();
-                break;
-            case GANADO:
-                JOptionPane.showMessageDialog(null, "Ganaste!");
-                restart();
-                correr();
-                break;
-            default: break;
-        }
-         */
     }
+
     private String[][] toMatrix(){
         String columns[] = tablero.toString().split("\\|");
         String matrixCeldas[][] = new String[dimension][dimension];
@@ -155,28 +141,23 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
                         celdas[i][j].setBackground(new Color(0xCDC1B4));
                         break;
                     case "2":
-                        //celdas[i][j] = new JLabel(s, SwingConstants.CENTER);
                         celdas[i][j].setText(s);
                         celdas[i][j].setBackground(new Color(0xeee4da));
                         break;
                     case "4":
                         celdas[i][j].setText(s);
-                        //celdas[i][j] = new JLabel(s, SwingConstants.CENTER);
                         celdas[i][j].setBackground(new Color(0xede0c8));
                         break;
                     case "8":
                         celdas[i][j].setText(s);
-                        //celdas[i][j] = new JLabel(s, SwingConstants.CENTER);
                         celdas[i][j].setBackground(new Color(0xf2b179));
                         break;
                     case "16":
                         celdas[i][j].setText(s);
-                        //celdas[i][j] = new JLabel(s, SwingConstants.CENTER);
                         celdas[i][j].setBackground(new Color(0xf59563));
                         break;
                     case "32":
                         celdas[i][j].setText(s);
-                        //celdas[i][j] = new JLabel(s, SwingConstants.CENTER);
                         celdas[i][j].setBackground(new Color(0xf67c5f));
                         break;
                 }
@@ -199,33 +180,47 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
             tablero.moverIzquierda();
             showFrame();
         }else if(actionEvent.getSource() == terminar){
-            restart();
-            correr();
+            //restart();
+            //correr();
+            System.exit(0);
         }
     }
     private void restart(){
-        frame.setVisible(false);
-        frame.dispose();
-        celdas = new JLabel[dimension][dimension];
-        tablero = new Tablero();
+        tablero = Tablero.crear2048();
+        showFrame();
     }
 
     @Override
     public void actualizar(Estado estado) {
         switch(estado){
             case PERDIDO:
-                JOptionPane.showMessageDialog(null, "Perdiste!");
+                mostrarMensajePerdido();
                 restart();
-                correr();
+
                 break;
             case GANADO:
-                JOptionPane.showMessageDialog(null, "Ganaste!");
+                mostrarMensajeGanado();
+                incremetarGanados();
                 restart();
-                correr();
                 break;
             default:
+                //incremetarGanados();
+                mostrarMensajeVacio();
                 showFrame();
                 break;
         }
+    }
+    private void incremetarGanados(){
+        ++cantGanados;
+        ganados.setText(Integer.toString(cantGanados));
+    }
+    private void mostrarMensajeGanado(){
+        estadoPartida.setText("GANO LA PARTIDA");
+    }
+    private void mostrarMensajePerdido(){
+        estadoPartida.setText("PERDIO LA PARTIDA");
+    }
+    private void mostrarMensajeVacio(){
+        estadoPartida.setText("");
     }
 }
