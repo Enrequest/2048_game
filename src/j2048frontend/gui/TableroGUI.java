@@ -19,25 +19,22 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
     private final int numDir = 4;
     private JButton dirButtons[] = new JButton[numDir];
     private JButton terminar;
+    private JButton reiniciar;
 
     private JPanel panel;
 
-    private JPanel mensaje;
-    private JLabel ganados;
-    private int cantGanados;
+    private JPanel panelEstado;
+    private JLabel partidasGanadas;
     private JLabel estadoPartida;
 
     public TableroGUI(Tablero tablero){
         this.tablero = tablero;
         tablero.agregarObservador(this);
-        cantGanados = 0;
     }
 
     @Override
     public void correr(){
-        //tablero.insertarNumeroDos();
         initGameFrame();
-        //createFrame();
     }
     private void createFrame(){
         //Creamos el frame principal
@@ -71,22 +68,28 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
         for (int i = 0; i < numDir; i++) frame.add(dirButtons[i]);
 
         //Agregamos la ventana de mensajes.
-        mensaje = new JPanel();
-        mensaje.setBounds(150, 425, 300, 50);
+        panelEstado = new JPanel();
+        panelEstado.setBounds(150, 425, 300, 50);
         JLabel labelGanados = new JLabel("Ganados: ");
-        mensaje.add(labelGanados);
-        ganados = new JLabel(Integer.toString(cantGanados));
-        mensaje.add(ganados);
+        panelEstado.add(labelGanados);
+        partidasGanadas = new JLabel("0");
+        panelEstado.add(partidasGanadas);
         estadoPartida = new JLabel("");
-        mensaje.add(estadoPartida);
-        //mensaje.setBackground(new Color(0xCDC1B4));
-        frame.add(mensaje);
+        panelEstado.add(estadoPartida);
+        //panelEstado.setBackground(new Color(0xCDC1B4));
+        frame.add(panelEstado);
 
         //Creamos el boton de Terminar
         terminar = new JButton("Terminar");
-        terminar.setBounds(225, 500, 150, 50);
+        //terminar.setBounds(225, 500, 150, 50);
+        terminar.setBounds(150, 500, 150, 50);
         terminar.addActionListener(this);
         frame.add(terminar);
+        //Creamos el boton de Reiniciar
+        reiniciar = new JButton("Reiniciar");
+        reiniciar.setBounds(310, 500, 150, 50);
+        reiniciar.addActionListener(this);
+        frame.add(reiniciar);
         /*
         for(int i=0; i<numDir; i++){
             dirButtons[i].setFocusable(false);
@@ -169,50 +172,48 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
     public void actionPerformed(ActionEvent actionEvent) {
         if(actionEvent.getSource() == dirButtons[0]){
             tablero.moverArriba();
-            showFrame();
         }else if(actionEvent.getSource() == dirButtons[1]){
             tablero.moverDerecha();
-            showFrame();
         }else if(actionEvent.getSource() == dirButtons[2]){
             tablero.moverAbajo();
-            showFrame();
         }else if(actionEvent.getSource() == dirButtons[3]){
             tablero.moverIzquierda();
-            showFrame();
         }else if(actionEvent.getSource() == terminar){
-            //restart();
-            //correr();
-            System.exit(0);
+            tablero.terminar2048();
+        }else if(actionEvent.getSource() == reiniciar){
+            tablero.reiniciar2048();
         }
     }
-    private void restart(){
-        tablero = Tablero.crear2048();
-        showFrame();
-    }
-
     @Override
     public void actualizar(Estado estado) {
         switch(estado){
             case PERDIDO:
+                bloquear();
                 mostrarMensajePerdido();
-                restart();
-
+                showFrame();
                 break;
             case GANADO:
+                bloquear();
                 mostrarMensajeGanado();
-                incremetarGanados();
-                restart();
+                mostrarGanados();
+                showFrame();
+                break;
+            case TERMINADO:
+                acabar();
+                break;
+            case REINICIADO:
+                desbloquear();
+                mostrarMensajeVacio();
+                showFrame();
                 break;
             default:
-                //incremetarGanados();
                 mostrarMensajeVacio();
                 showFrame();
                 break;
         }
     }
-    private void incremetarGanados(){
-        ++cantGanados;
-        ganados.setText(Integer.toString(cantGanados));
+    private void mostrarGanados(){
+        partidasGanadas.setText(Integer.toString(tablero.obtenerPuntaje()));
     }
     private void mostrarMensajeGanado(){
         estadoPartida.setText("GANO LA PARTIDA");
@@ -222,5 +223,19 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
     }
     private void mostrarMensajeVacio(){
         estadoPartida.setText("");
+    }
+    private void acabar(){
+        frame.setVisible(false);
+        frame.dispose();
+    }
+    private void desbloquear(){
+        for(JButton buton : dirButtons){
+            buton.setEnabled(true);
+        }
+    }
+    private void bloquear(){
+        for(JButton buton : dirButtons){
+            buton.setEnabled(false);
+        }
     }
 }

@@ -9,11 +9,17 @@ public class Tablero {
     private int matrix[][];
     ////List of Observers:
     private List<Observador> observadores;
+    private boolean terminado;
+    private boolean reiniciado;
+    private int partidasGanadas;
     ///Constructors:
     private Tablero() {
         DIMENSION = 4;
         observadores = new ArrayList<Observador>();
         matrix = new int[DIMENSION][DIMENSION];
+        terminado = false;
+        reiniciado = false;
+        partidasGanadas = 0;
     }
     //Methods:
     public static Tablero crear2048(){
@@ -21,6 +27,7 @@ public class Tablero {
         tablero.insertarNumeroDos();
         return tablero;
     }
+
     private boolean isFull(){
         for(int i = 0; i< DIMENSION; i++)
             for(int j = 0; j< DIMENSION; j++)
@@ -180,16 +187,6 @@ public class Tablero {
         }
         return tableroMatrix;
     }
-    /*
-    private boolean verificarAdyacenciaCol(){
-        Tablero clonTablero = duplicate(this);
-        for (int i = 0; i < dimension; i++) {
-            clonTablero[i] = Arrays.copyOf(clonTablero[dimension - i - 1], dimension);
-        }
-        return verificarAdyacenciaFila(clonTablero);
-    }
-     */
-    /////////////////////
 
     //private int LIMITE = 2048;
     private int LIMITE = 32;//16;
@@ -201,15 +198,19 @@ public class Tablero {
         return false;
     }
 
-    public Estado estado(){
+    private Estado estado(){
+        if(terminado){
+            return Estado.TERMINADO;
+        }
+        if(reiniciado) return Estado.REINICIADO;
         if(alcanceLimite()){
+            partidasGanadas++;
             return Estado.GANADO;
         }
         if(!sePuedeMover()){
-        //if(isFull()){
             return Estado.PERDIDO;
         }
-        return Estado.CONTINUAR;
+        return Estado.EN_JUEGO;
     }
 
     public void agregarObservador(Observador observador) {
@@ -222,6 +223,20 @@ public class Tablero {
             observador.actualizar(estadoA);
         }
     }
-
+    public void terminar2048(){
+        terminado = true;
+        notificar();
+    }
+    public void reiniciar2048(){
+        matrix = new int[DIMENSION][DIMENSION];
+        reiniciado = true;
+        terminado = false;
+        insertarNumeroDos();
+        notificar();
+        reiniciado = false;
+    }
+    public int obtenerPuntaje(){
+        return partidasGanadas;
+    }
 }
 

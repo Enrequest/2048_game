@@ -1,5 +1,9 @@
 package j2048backend;
 public enum Estado{
-    PERDIDO, GANADO, CONTINUAR;
+    TERMINADO, //para terminar el juego
+    GANADO,
+    PERDIDO,
+    REINICIADO, // para reiniciar el juego
+    EN_JUEGO;
 }
 

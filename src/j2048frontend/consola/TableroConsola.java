@@ -1,36 +1,41 @@
 package j2048frontend.consola;
 
+import java.io.BufferedReader;
 import java.util.*;
 import j2048backend.Tablero;
 import j2048backend.Estado;
 import j2048frontend.Observador;
 import j2048frontend.TableroUI;
+import java.io.*;
 
 public class TableroConsola implements Observador, TableroUI {
     private Tablero tablero;
     private boolean continuar = true;
+    private BufferedReader bf ;
     //private Observador observable;
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
         tablero.agregarObservador(this);
+        bf = new BufferedReader(new InputStreamReader(System.in));
     }
     @Override
     public void correr() {
-        Scanner sc = new Scanner(System.in);
-        continuar = true;
         printTablero(tablero);
         printMessage();
         while (continuar) {
-            // pedir comando (mover izquierda, derecha, arriba)
-            // w = arriba, a = izquierda, s = abajo, d = derecha.
-            // ejecutar movimiento.
-            // mostrar tablero.
-
-            String inputCase = sc.next();
-            if (inputCase.equals("w")) tablero.moverArriba();
-            else if (inputCase.equals("a")) tablero.moverIzquierda();
-            else if (inputCase.equals("s")) tablero.moverAbajo();
-            else if (inputCase.equals("d")) tablero.moverDerecha();
+            try {
+                if(bf.ready()) {
+                    String inputCase = bf.readLine();
+                    if (inputCase.equals("w")) tablero.moverArriba();
+                    else if (inputCase.equals("a")) tablero.moverIzquierda();
+                    else if (inputCase.equals("s")) tablero.moverAbajo();
+                    else if (inputCase.equals("d")) tablero.moverDerecha();
+                    else if (inputCase.equals("q")) tablero.terminar2048();
+                    else if (inputCase.equals("r")) tablero.reiniciar2048();
+                }
+            } catch(IOException e){
+                e.printStackTrace();
+            }
         }
     }
     private void printMessage() {
@@ -40,39 +45,65 @@ public class TableroConsola implements Observador, TableroUI {
     private void printTablero(Tablero tablero) {
         String strTab = tablero.toString();
         String[] parts = strTab.split("\\|");
-        for (int i = 0; i < parts.length; i++) {
+        String partsFinal[][] = new String[parts.length][];
+        for(int i = 0; i < parts.length; i++){
+            partsFinal[i] = parts[i].split(" ");
+        }
+        int dimension = partsFinal.length;
+        for (int i = 0; i < dimension; i++) {
             System.out.print("[");
-            System.out.print(parts[i]);
+            for(int j = 0; j < dimension; j++) {
+                int tamCelda = 5;
+                int diff = tamCelda - partsFinal[i][j].length();
+                for(int k = 0; k < tamCelda; k++){
+                    if(k<diff)
+                        System.out.print(" ");
+                    else {
+                        System.out.print(partsFinal[i][j]);
+                        break;
+                    }
+                }
+            }
             System.out.println("]");
         }
-    }
-    public void reset(){
-        tablero = Tablero.crear2048();
     }
     @Override
     public void actualizar(Estado estado) {
         switch(estado){
             case PERDIDO:
+                bloquear();
+                printTablero(tablero);
+                printMessage();
                 System.out.println("Perdio la partida!");
-                reset();
-                //continuar = false;
                 break;
             case GANADO:
+                bloquear();
+                printTablero(tablero);
+                printMessage();
                 System.out.println("Gano la partida!");
-                reset();
-                //tablero = Tablero.crear2048();
-                //continuar = false;
+                break;
+            case TERMINADO:
+                acabar();
+                break;
+            case REINICIADO:
+                desbloquear();
+                printTablero(tablero);
+                printMessage();
                 break;
             default:
-                System.out.println("Continua la partida");
+                printTablero(tablero);
+                printMessage();
                 break;
         }
-        printTablero(tablero);
-        printMessage();
-        //printMessage();
     }
-    // cuando termina el ciclo infinito?
-    // 1. cuando lleguemos a un limite en alguna casilla (2048)
-    // 2. cuando ya no hay casillas libres (inserto la ultima libre y ya no se puede mover).
+    private void bloquear(){
+
+    }
+    private void desbloquear(){
+
+    }
+    private void acabar(){
+         continuar = false;
+    }
 
 }
