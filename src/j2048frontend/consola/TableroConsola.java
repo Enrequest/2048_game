@@ -10,13 +10,16 @@ import java.io.*;
 
 public class TableroConsola implements Observador, TableroUI {
     private Tablero tablero;
-    private boolean continuar = true;
+    private boolean continuar;
     private BufferedReader bf ;
+    private boolean bloqueado;
     //private Observador observable;
     public TableroConsola(Tablero tablero) {
         this.tablero = tablero;
         tablero.agregarObservador(this);
         bf = new BufferedReader(new InputStreamReader(System.in));
+        continuar = true;
+        bloqueado = false;
     }
     @Override
     public void correr() {
@@ -26,12 +29,15 @@ public class TableroConsola implements Observador, TableroUI {
             try {
                 if(bf.ready()) {
                     String inputCase = bf.readLine();
-                    if (inputCase.equals("w")) tablero.moverArriba();
-                    else if (inputCase.equals("a")) tablero.moverIzquierda();
-                    else if (inputCase.equals("s")) tablero.moverAbajo();
-                    else if (inputCase.equals("d")) tablero.moverDerecha();
-                    else if (inputCase.equals("q")) tablero.terminar2048();
-                    else if (inputCase.equals("r")) tablero.reiniciar2048();
+                    if(!bloqueado || inputCase.equals("r") || inputCase.equals("q")) {
+                        if (inputCase.equals("w")) tablero.moverArriba();
+                        else if (inputCase.equals("a")) tablero.moverIzquierda();
+                        else if (inputCase.equals("s")) tablero.moverAbajo();
+                        else if (inputCase.equals("d")) tablero.moverDerecha();
+                        else if (inputCase.equals("q")) tablero.terminar2048();
+                        else if (inputCase.equals("r")) tablero.reiniciar2048();
+                        else System.out.println("Ingrese un comando valido!!!");
+                    }
                 }
             } catch(IOException e){
                 e.printStackTrace();
@@ -40,7 +46,10 @@ public class TableroConsola implements Observador, TableroUI {
     }
     private void printMessage() {
         System.out.println("Ingrese comando a ejecutar:");
-        System.out.println("w = arriba; a = izquierda; s = abajo; d = derecha.");
+        System.out.println("w = arriba; a = izquierda; s = abajo; d = derecha; r = reiniciar; q = terminar");
+    }
+    private void mostrarGanados(){
+        System.out.println("GANADOS: " + tablero.obtenerPuntaje());
     }
     private void printTablero(Tablero tablero) {
         String strTab = tablero.toString();
@@ -73,14 +82,16 @@ public class TableroConsola implements Observador, TableroUI {
             case PERDIDO:
                 bloquear();
                 printTablero(tablero);
-                printMessage();
-                System.out.println("Perdio la partida!");
+                mostrarGanados();
+                //printMessage();
+                System.out.println("PERDIO LA PARTIDA!");
                 break;
             case GANADO:
                 bloquear();
                 printTablero(tablero);
-                printMessage();
-                System.out.println("Gano la partida!");
+                mostrarGanados();
+                //printMessage();
+                System.out.println("GANO LA PARTIDA!");
                 break;
             case TERMINADO:
                 acabar();
@@ -88,19 +99,21 @@ public class TableroConsola implements Observador, TableroUI {
             case REINICIADO:
                 desbloquear();
                 printTablero(tablero);
+                mostrarGanados();
                 printMessage();
                 break;
             default:
                 printTablero(tablero);
+                mostrarGanados();
                 printMessage();
                 break;
         }
     }
     private void bloquear(){
-
+        bloqueado = true;
     }
     private void desbloquear(){
-
+        bloqueado = false;
     }
     private void acabar(){
          continuar = false;

@@ -9,6 +9,6 @@ public class Main {
         TableroGUI gui = new TableroGUI(tablero);
         gui.correr();
         consola.correr();
-        System.out.println("FIN");
+        //System.out.println("FIN");
     }
 }

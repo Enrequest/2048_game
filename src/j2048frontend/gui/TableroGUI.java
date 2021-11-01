@@ -70,12 +70,18 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
         //Agregamos la ventana de mensajes.
         panelEstado = new JPanel();
         panelEstado.setBounds(150, 425, 300, 50);
+        //panelEstado.setLayout(new BorderLayout());
         JLabel labelGanados = new JLabel("Ganados: ");
-        panelEstado.add(labelGanados);
+
         partidasGanadas = new JLabel("0");
-        panelEstado.add(partidasGanadas);
+
         estadoPartida = new JLabel("");
+        //Definimos la Fuente del estado de la partida.
+        estadoPartida.setFont(new Font("Serif", Font.ITALIC, 14));
+        //Colocamos en el panel
         panelEstado.add(estadoPartida);
+        panelEstado.add(labelGanados);
+        panelEstado.add(partidasGanadas);
         //panelEstado.setBackground(new Color(0xCDC1B4));
         frame.add(panelEstado);
 
@@ -216,10 +222,10 @@ public class TableroGUI implements ActionListener, Observador, TableroUI {
         partidasGanadas.setText(Integer.toString(tablero.obtenerPuntaje()));
     }
     private void mostrarMensajeGanado(){
-        estadoPartida.setText("GANO LA PARTIDA");
+        estadoPartida.setText("GANO LA PARTIDA!    ");
     }
     private void mostrarMensajePerdido(){
-        estadoPartida.setText("PERDIO LA PARTIDA");
+        estadoPartida.setText("PERDIO LA PARTIDA!    ");
     }
     private void mostrarMensajeVacio(){
         estadoPartida.setText("");

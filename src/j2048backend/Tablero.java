@@ -73,6 +73,7 @@ public class Tablero {
         }
         matrix = M;
     }
+
     private void mover(){
         for(int i = 0; i< DIMENSION; i++){
             int last = matrix[i][0];
@@ -84,13 +85,14 @@ public class Tablero {
                     if(last == 0){
                         matrix[i][idx_last] = curr;
                         matrix[i][j] = 0;
-                        last = matrix[i][idx_last];
+                        last = curr; //matrix[i][idx_last];
                     }
                     //The case when we add numbers
                     else if(last == curr) {
                         matrix[i][idx_last] = last + curr;
                         matrix[i][j] = 0;
-                        last = matrix[i][idx_last];
+                        last = matrix[i][idx_last+1];
+                        idx_last = idx_last+1;
                     }
                     //The case when only move the number
                     else{
@@ -135,39 +137,21 @@ public class Tablero {
         if(!str_original.equals(toString())) insertarNumeroDos();
         notificar();
     }
-
     public String toString(){
+        return toString(matrix);
+    }
+    private String toString(int matriz[][]){
         String ans = "";
         for(int i = 0; i< DIMENSION; i++){
             for(int j = 0; j< DIMENSION; j++) {
-                if(i==0&&j==0) ans+=matrix[i][j];
-                else if(j==0) ans+= "|" + matrix[i][j];
-                else ans+= " " + matrix[i][j];
+                if(i==0&&j==0) ans+=matriz[i][j];
+                else if(j==0) ans+= "|" + matriz[i][j];
+                else ans+= " " + matriz[i][j];
             }
         }
         return ans;
     }
-    /*
-    private boolean sePuedeMover(){
-        //Verificamos si ya no se pueden hacer movimientos:
-        Tablero dupTab = duplicate(this);
-        String str = toString();
-        dupTab.moverArriba();
-        String strm = dupTab.toString();
-        if(!str.equals(strm)) return true;
-        dupTab.moverAbajo();
-        strm = dupTab.toString();
-        if(!str.equals(strm)) return true;
-        dupTab.moverDerecha();
-        strm = dupTab.toString();
-        if(!str.equals(strm)) return true;
-        dupTab.moverIzquierda();
-        strm = dupTab.toString();
-        if(!str.equals(strm)) return true;
-        return false;
-    }
-    */
-    //////////////////////////////////
+
     private boolean sePuedeMover(){
         for(int i = 0; i < DIMENSION; i++){
             for(int j = 0; j < DIMENSION; j++){
